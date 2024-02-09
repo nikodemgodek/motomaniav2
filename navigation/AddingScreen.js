@@ -15,7 +15,7 @@ import * as yup from 'yup';
 
 
 const COLOR_PRIMARY = '#1A472A';
-const HEADER_TITLE = 'Dodaj ogłoszenie';
+const HEADER_TITLE = 'Add an advertisement';
 const phoneRegExp = /^[1-9][0-9]{8}$/;
 
 const AddingScreen = ({navigation}) => {
@@ -47,6 +47,9 @@ const AddingScreen = ({navigation}) => {
     })
 
     const { user } = useContext(UserContext);
+
+    console.log(user);
+
     const [modalVisible, setModalVisible] = useState(true);
     const [description, setDescription] = useState('');
     const [images, setImages] = useState(null);
@@ -93,6 +96,12 @@ const AddingScreen = ({navigation}) => {
 
     const handleAdd = async (values) => {
         try {
+
+            if(images === null) {
+                alert('Upload at least one picture');
+                return;
+            }
+
             const userCollectionRef = collection(firestore, 'advertisements');
             const advertisementID = generateRandomId();
             const userDoc = doc(userCollectionRef, advertisementID);
@@ -110,8 +119,9 @@ const AddingScreen = ({navigation}) => {
                 location: values.location,
                 productionYear: values.productionYear,
                 timestamp: currentTimestamp,
-                user: user.uid,
+                userId: user.uid,
             }
+
             console.log(objectToAdd);
 
             await setDoc(userDoc, objectToAdd, { merge: true });
@@ -182,7 +192,7 @@ const AddingScreen = ({navigation}) => {
                             <Text style={{
                                 fontSize: 20,
                                 fontWeight: '600'
-                            }}>Dodaj ogłoszenie</Text>
+                            }}>Add an advertisement</Text>
                         </Animated.View>
                         <ScrollView onScroll={handleScroll} scrollEventThrottle={16} contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-start', marginHorizontal: 20}}>
                             <Text style={[
@@ -191,13 +201,13 @@ const AddingScreen = ({navigation}) => {
                                     fontSize: 26,
                                     fontWeight: 'bold',
                                 },
-                        ]}>Dodaj ogłoszenie</Text>
+                        ]}>Add an advertisement</Text>
                             <Text style={{
                                 marginTop: 10,
                                 fontSize: 18,
                                 fontWeight: '600',
                                 color: '#444'
-                            }}>Szczegóły</Text>
+                            }}>Details</Text>
                             <View style={{
                                 position: 'relative',
                                 backgroundColor: '#fff0f3',
@@ -260,20 +270,20 @@ const AddingScreen = ({navigation}) => {
                                             color: '#444',
                                             opacity: .4,
                                         }}>
-                                            Dodaj zdjęcia
+                                            Add photos
                                         </Text>
                                     </Pressable>
                                 }
                                 
                             </View>
-                            <Input onBlur={handleBlur('title')} onChangeText={handleChange('title')} value={values.title} label="Tytuł ogłoszenia*" placeholder="np. BMW E46 328Ci *AUTOMAT*" error={ errors.title && touched.title ? true: false } errormsg={touched.title && errors.title}/>
-                            <Input onBlur={handleBlur('brand')} onChangeText={handleChange('brand')} value={values.brand} label="Marka*" placeholder="" error={ errors.brand && touched.brand ? true: false } errormsg={touched.brand && errors.brand}/>
+                            <Input onBlur={handleBlur('title')} onChangeText={handleChange('title')} value={values.title} label="Advertisement title*" placeholder="i.e. Sell BMW e46 328Ci Topas-blau well condition" error={ errors.title && touched.title ? true: false } errormsg={touched.title && errors.title}/>
+                            <Input onBlur={handleBlur('brand')} onChangeText={handleChange('brand')} value={values.brand} label="Make*" placeholder="" error={ errors.brand && touched.brand ? true: false } errormsg={touched.brand && errors.brand}/>
                             <Input onBlur={handleBlur('model')} onChangeText={handleChange('model')} value={values.model} label="Model*" placeholder="" error={ errors.model && touched.model ? true: false } errormsg={touched.model && errors.model}/>
                             <Input onBlur={handleBlur('price')} onChangeText={handleChange('price')} value={values.price} label="Price*" placeholder="" error={ errors.price && touched.price ? true: false } errormsg={touched.price && errors.price}/>
                             <Input onBlur={handleBlur('productionYear')} onChangeText={handleChange('productionYear')} value={values.productionYear} label="Production year*" placeholder="" error={ errors.productionYear && touched.productionYear ? true: false } errormsg={touched.productionYear && errors.productionYear}/>
-                            <Input onBlur={handleBlur('mileage')} onChangeText={handleChange('mileage')} value={values.mileage} label="mileage*" placeholder="" error={ errors.mileage && touched.mileage ? true: false } errormsg={touched.mileage && errors.mileage}/>
+                            <Input onBlur={handleBlur('mileage')} onChangeText={handleChange('mileage')} value={values.mileage} label="Mileage (km/h)*" placeholder="" error={ errors.mileage && touched.mileage ? true: false } errormsg={touched.mileage && errors.mileage}/>
                             <Input multiline textAlignVertical={'top'} onBlur={handleBlur('desc')} onChangeText={handleChange('desc')} value={values.desc} label="Description*" placeholder="" error={ errors.desc && touched.desc ? true: false } errormsg={touched.desc && errors.desc}/>
-                            <Input onBlur={handleBlur('phone')} onChangeText={handleChange('phone')} value={values.phone} label="Phone*" placeholder="" error={ errors.phone && touched.phone ? true: false } errormsg={touched.phone && errors.phone}/>
+                            <Input onBlur={handleBlur('phone')} onChangeText={handleChange('phone')} value={values.phone} label="Phone number*" placeholder="" error={ errors.phone && touched.phone ? true: false } errormsg={touched.phone && errors.phone}/>
                             <Input onBlur={handleBlur('location')} onChangeText={handleChange('location')} value={values.location} label="Location*" placeholder="" error={ errors.location && touched.location ? true: false } errormsg={touched.location && errors.location}/>
                             
                             <View style={{
@@ -291,7 +301,7 @@ const AddingScreen = ({navigation}) => {
                                     onPress={() => { console.log('pressed')}}
                                     color={COLOR_PRIMARY}
                                 >
-                                    Zacznij od nowa
+                                    Clear fields and retry
                                 </Button>
                                 <Button 
                                     style={{ 
@@ -301,7 +311,7 @@ const AddingScreen = ({navigation}) => {
                                     mode="contained" 
                                     onPress={isValid && handleSubmit}
                                 >
-                                    Dodaj ogłoszenie
+                                    Finish
                                 </Button>
                             </View>
                         </ScrollView>

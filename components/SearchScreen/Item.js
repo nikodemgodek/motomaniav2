@@ -1,9 +1,9 @@
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Item = (props) => {
     return(
-        <View style={[{ width: '50%', padding: 3}]}>
+        <Pressable onPress={props.onPress} style={[{ width: '50%', padding: 3}]}>
             {!props.image &&
                 <View style={{ backgroundColor: '#999', height: 150, alignItems: 'center', justifyContent: 'center', borderTopLeftRadius: 5, borderTopEndRadius: 5}}>
                     <Ionicons name="camera" size={30} color="#fff"/>
@@ -27,7 +27,7 @@ const Item = (props) => {
                     <Text style={{ fontSize: 12, marginLeft: 5 }}>{props.productionYear} - {props.mileage} km</Text>
                 </View>
             </View>
-        </View>
+        </Pressable>
     )
 }
 

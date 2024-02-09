@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, TouchableWithoutFeedback, TouchableOpacity, Keyboard, Platform, Image, Pressable, ActivityIndicator } from 'react-native';
 import Button from '../components/Button';
 import PrettyTextInput from '../components/PrettyTextInput';
+import { TextInput } from 'react-native-paper';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import { useEffect, useState } from 'react';
@@ -16,12 +17,11 @@ const validationSchema = yup.object().shape({
     email: yup.string().matches(
         /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
         'Please insert valid e-mail address'
-      ).required('Email is required'),
+      ).required('Email address is required'),
     password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
     passwordrepeat: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match').required('Repeat password is required'),
     firstname: yup.string().required('First name is required'),
     lastname: yup.string().required('Last name is required'),
-    phone: yup.string().matches(/^[0-9]{9}$/, 'Invalid phone number').required('Phone number is required'),
 })
 
 const SignupScreen = ({navigation}) => {
@@ -51,16 +51,21 @@ const SignupScreen = ({navigation}) => {
         }
     }, [])
 
+    
+
     const handleRegister = async (values, { setSubmitting, resetForm }) => {
         Keyboard.dismiss();
         try {
-            await signUp(values.email, values.password, navigation, firestore, {
+            const result = await signUp(values.email, values.password, navigation, firestore, {
+                email: values.email,
                 firstName: values.firstname,
                 lastName: values.lastname,
-                phone: values.phone
             });
             resetForm();
-            navigation.navigate('MainTabs');
+            if(result) {
+                navigation.navigate('AccountCreatedScreen');
+            }
+
         } catch (error) {
             console.log(error);
         }
@@ -76,7 +81,7 @@ const SignupScreen = ({navigation}) => {
              {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, isSubmitting, resetForm }) => (
                     <View style={{justifyContent: 'center', marginTop: 50, marginHorizontal: 30}}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                            <View style={{alignItems: 'flex-start', justifyContent: 'center', flexDirection: 'column', marginVertical: 5}}>
+                            <View style={{alignItems: 'flex-start', justifyContent: 'center', flexDirection: 'column', marginVertical: 30}}>
                                 <Text style={{fontSize: 26, fontWeight: '600', marginBottom: 10}}>Create Account</Text>
                                 <Text style={{fontSize: 14}}>Find your dream car and buy it now!</Text>
                             </View>
@@ -84,17 +89,16 @@ const SignupScreen = ({navigation}) => {
                         
                         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                             <View style={{ marginTop: keyboardOpen ? 0 : 0 }}>
-                                <PrettyTextInput placeholder="First Name" icon='person-outline' onBlur={handleBlur('firstname')} onChangeText={handleChange('firstname')} value={values.firstname}/>
+                            <TextInput activeOutlineColor={COLOR_PRIMARY} style={{ height: 45, marginBottom: 5 }} label="First name" onBlur={handleBlur('firstname')} onChangeText={handleChange('firstname')} value={values.firstname} mode="outlined" error={ errors.firstname && touched.firstname ? true: false } />
+                            <TextInput activeOutlineColor={COLOR_PRIMARY} style={{ height: 45, marginBottom: 5 }} label="Last name" onBlur={handleBlur('lastname')} onChangeText={handleChange('lastname')} value={values.lastname} mode="outlined" error={ errors.lastname && touched.lastname ? true: false } />
+                            <TextInput activeOutlineColor={COLOR_PRIMARY} style={{ height: 45, marginBottom: 5 }} label="Email address" onBlur={handleBlur('email')} onChangeText={handleChange('email')} value={values.email} mode="outlined" error={ errors.email && touched.email ? true: false } />
+                            <TextInput secureTextEntry activeOutlineColor={COLOR_PRIMARY} style={{ height: 45, marginBottom: 5 }} label="Password" onBlur={handleBlur('password')} onChangeText={handleChange('password')} value={values.password} mode="outlined" error={ errors.password && touched.password ? true: false } />
+                            <TextInput secureTextEntry activeOutlineColor={COLOR_PRIMARY} style={{ height: 45, marginBottom: 5 }} label="Confirm password" onBlur={handleBlur('passwordrepeat')} onChangeText={handleChange('passwordrepeat')} value={values.passwordrepeat} mode="outlined" error={ errors.passwordrepeat && touched.passwordrepeat ? true: false } />
                                 {errors.firstname && touched.firstname && <Text style={{fontSize: 12, color: 'red'}}>{errors.firstname}</Text>}
-                                <PrettyTextInput placeholder="Last Name" icon='person-outline' onBlur={handleBlur('lastname')} onChangeText={handleChange('lastname')} value={values.lastname}/>
                                 {errors.lastname && touched.lastname && <Text style={{fontSize: 12, color: 'red'}}>{errors.lastname}</Text>}
-                                <PrettyTextInput placeholder="Email Address" icon='mail-outline' onBlur={handleBlur('email')} onChangeText={handleChange('email')} value={values.email}/>
                                 {errors.email && touched.email && <Text style={{fontSize: 12, color: 'red'}}>{errors.email}</Text>}
-                                <PrettyTextInput placeholder="Password" icon='key-outline' onBlur={handleBlur('password')} onChangeText={handleChange('password')} value={values.password} secureTextEntry={true}/>
                                 {errors.password && touched.password && <Text style={{fontSize: 12, color: 'red'}}>{errors.password}</Text>}
-                                <PrettyTextInput placeholder="Re-enter Password" icon='key-outline' onBlur={handleBlur('passwordrepeat')} onChangeText={handleChange('passwordrepeat')} value={values.passwordrepeat} secureTextEntry={true}/>
                                 {errors.passwordrepeat && touched.passwordrepeat && <Text style={{fontSize: 12, color: 'red'}}>{errors.passwordrepeat}</Text>}
-                                <PrettyTextInput placeholder="Phone" icon='call-outline' onBlur={handleBlur('phone')} onChangeText={handleChange('phone')} value={values.phone}/>
                                 {errors.phone && touched.phone && <Text style={{fontSize: 12, color: 'red'}}>{errors.phone}</Text>}
                                 
                                 <View style={{

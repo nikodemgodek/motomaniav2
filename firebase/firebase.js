@@ -27,3 +27,6 @@ const auth = initializeAuth(firebase, {
 
 
 export { firestore, firebase };
+
+// ios: 514148160856-gv0avgoih8idn84cdc5svifpr1ius0u9.apps.googleusercontent.com
+// android: 514148160856-jr0dnbi85km7jsa0e392v9li4en416h9.apps.googleusercontent.com

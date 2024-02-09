@@ -18,8 +18,7 @@ const validationSchema = yup.object().shape({
 const LoginScreen = ({navigation}) => {
     const [keyboardOpen, setKeyboardOpen] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
-    const { signIn } = useContext(UserContext);
-    const { user } = useContext(UserContext);
+    const { user, promptAsync, signIn } = useContext(UserContext);
 
     useEffect(() => {
 
@@ -65,7 +64,7 @@ const LoginScreen = ({navigation}) => {
                     <View style={{justifyContent: 'center', marginTop: 80, marginHorizontal: 30}}>
                         <View style={{alignItems: 'flex-start', justifyContent: 'center', flexDirection: 'column', marginVertical: 10}}>
                             <Text style={{fontSize: 26, fontWeight: '600', marginBottom: 15}}>Welcome back!</Text>
-                            <Text style={{fontSize: 14}}>Nice to see you again, we missed you.</Text>
+                            <Text testID="LoginScreenText" style={{fontSize: 14}}>Nice to see you again, we missed you.</Text>
                         </View>
                         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                             <View style={{ marginTop: keyboardOpen ? 0 : 0 }}>
@@ -122,7 +121,7 @@ const LoginScreen = ({navigation}) => {
                                         <Text>Facebook</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity 
-                                        onPress={() => console.log('Pressed!')}
+                                        onPress={() => promptAsync()}
                                         style={{
                                             flex: 1,
                                             alignItems: 'center',

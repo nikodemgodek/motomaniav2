@@ -11,6 +11,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AddingScreen from "./AddingScreen";
 import { Platform } from "react-native";
+import DetailsScreen from "./DetailsScreen";
+import SetNicknameScreen from "./SetNicknameScreen";
+import AccountCreatedScreen from "./AccountCreatedScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -42,7 +45,6 @@ const MainTabNavigator = ({navigation}) => {
         <Tab.Screen name="Search" component={SearchScreen} options={{headerShown: false}}/>
         <Tab.Screen name="Add" component={AddingScreen} options={{
             headerShown: false,
-            tabBarStyle: { }
         }}/>
         <Tab.Screen name="Account" component={OptionsScreen} options={{headerShown: false}}/>
         {/* Dodaj inne ekrany do Tab.Navigator */}
@@ -73,6 +75,21 @@ const MainApp = () => {
                 <Stack.Screen
                     name="MainTabs"
                     component={MainTabNavigator}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="DetailsScreen"
+                    component={DetailsScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="SetNicknameScreen"
+                    component={SetNicknameScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="AccountCreatedScreen"
+                    component={AccountCreatedScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

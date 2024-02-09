@@ -29,14 +29,3 @@ export const registerUsingEmailAndPassword = async (email, password, data) => {
     })
 }
 
-export const logInUsingEmailAndPassword = async (email, password) => {
-    signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-        const user = userCredential.user;
-        console.log('Zalogowano:', user.uid);
-        return { success: true, user }
-    })
-    .catch((error) => {
-        console.error("Blad:", error);
-    })
-}

@@ -1,10 +1,15 @@
 import React, { createContext, useContext, useState } from 'react';
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, signInWithCustomToken } from 'firebase/auth';
+import { sendEmailVerification, createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, signInWithCustomToken, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import firebase from '../firebase/firebase';
 import { getDoc, doc, collection, setDoc } from 'firebase/firestore';
 // Inicjalizacja autentykacji Firebase
 import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import * as Google from "expo-auth-session/providers/google";
+import * as WebBrowser from 'expo-web-browser';
+
+WebBrowser.maybeCompleteAuthSession();
 
 const auth = getAuth(firebase);
 export const UserContext = createContext();
@@ -12,6 +17,19 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    iosClientId: '514148160856-gv0avgoih8idn84cdc5svifpr1ius0u9.apps.googleusercontent.com',
+    androidClientId: '514148160856-jr0dnbi85km7jsa0e392v9li4en416h9.apps.googleusercontent.com',
+  });
+
+  useEffect( () => {
+    if(response?.type == "success") {
+      const { id_token } = response.params;
+      const credential = GoogleAuthProvider.credential(id_token);
+      signInWithCredential(auth, credential);
+    }
+  }, [response])
 
   useEffect( () => {
 
@@ -54,10 +72,25 @@ export const UserProvider = ({ children }) => {
             setUserDetails(userSnapshot.data());
             console.log(userSnapshot.data());
         }
+
+        console.log(response.user);
+        await sendEmailVerification(response.user);
         navigation.navigate('MainTabs');
+        return true;
+        
     } catch (error) {
-        console.log('Blad:', error);
-    }
+        if (error.code === 'auth/email-already-in-use') {
+          alert('This email is in use. Please try again using another email');
+        } else if (error.code === 'auth/invalid-email') {
+          console.log('Ten adres email jest nieprawidłowy!');
+        } else if (error.code === 'auth/weak-password') {
+          console.log('Hasło jest za słabe!');
+        } else {
+          console.log('Wystąpił nieoczekiwany błąd: ', error.message);
+        }
+
+        return false;
+    } 
   }
   
   const signInWithToken = async () => {
@@ -105,8 +138,11 @@ export const UserProvider = ({ children }) => {
 
         }
         
-      
-        navigation.navigate('MainTabs');
+        if(user.emailVerified) {
+          navigation.navigate('MainTabs');
+        } else {
+          navigation.navigate('AccountCreatedScreen');
+        }
     } catch (error) {
         console.error(error);
     }
@@ -129,7 +165,7 @@ export const UserProvider = ({ children }) => {
   }
 
   return (
-    <UserContext.Provider value={{ user, userDetails, signIn, signUp, signOutUser }}>
+    <UserContext.Provider value={{ user, userDetails, signIn, signUp, signOutUser, promptAsync }}>
       {children}
     </UserContext.Provider>
   );

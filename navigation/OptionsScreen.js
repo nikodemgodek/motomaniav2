@@ -16,8 +16,9 @@ import { UserContext } from '../context/UserContext';
 import { signOut } from 'firebase/auth';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import ButtonEx from '../components/OptionsScreen/ButtonEx';
+import { COLOR_PRIMARY } from '../constants/colors';
 
-const { width } = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 const settingsSections = [
     {
         title: "Account details",
@@ -34,60 +35,22 @@ const OptionsScreen = ({navigation}) => {
     }
     
     return(
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#f1f1f1'}}>
-            <View style={{
-                alignItems: 'flex-end',
-                marginRight: 20,
-                marginTop: 55
-            }}>
-                <Pressable onPress={handleLogOut}>
-                    <Ionicons name='log-out-outline' size={30} color="#000" />
+        <View style={{ 
+            flex: 1, 
+            width, 
+            height,
+            backgroundColor: '#fff' }}>
+            <View style={{ position: 'relative', backgroundColor: COLOR_PRIMARY, height: "20%", borderBottomEndRadius: 40, borderBottomStartRadius: 40, justifyContent: 'center', alignItems: 'center', }}>
+                <Pressable style={{ position: 'absolute', top: 55, right: 15 }} onPress={handleLogOut}>
+                    <Ionicons name="log-out-outline" size={30} color="#fff" />
                 </Pressable>
-                
+                <Image source={require('../assets/cat.jpg')} style={{ width: 100, height: 100, backgroundColor: '#ddd', marginTop: 140, borderRadius: 100, resizeMode: 'cover',  }} />
             </View>
-            <View style={[{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}, 
-                            Platform.OS === 'ios' ? styles.marginIOS : styles.marginAndroid
-            ]}>
-                <View style={styles.avatar}>
-                    <View style={{
-                        overflow: 'hidden',
-                        borderRadius: 100
-                    }}>
-                        <Image style={{width: '100%', height: '100%', resizeMode: 'cover'}} source={require('../assets/cat.jpg')} />
-                    </View>
-                    <TouchableOpacity style={styles.avatarCircleButton} onPress={() => {}}>
-                        <View style={{backgroundColor: 'tomato', width: 40, height: 40, borderRadius: 100, alignItems: 'center', justifyContent: 'center',}}>
-                            <Icon style={styles.avatarImg} name="camera" size={20} />
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                {<View style={{ alignItems: 'center', justifyContent: 'center', marginTop: 10}}>
-                    <Text style={{ fontSize: 26, fontWeight: 600}}>{userDetails && userDetails.firstName} {userDetails && userDetails.lastName}</Text>
-                    <Text>{user && user.email}</Text>
-                </View>}
+            <View style={{ backgroundColor: '#fff', flex: 1, marginTop: 50, alignItems: 'center', }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', marginBottom: 2}}>{user && userDetails.firstName} {user && userDetails.lastName}</Text>
+                <Text style={{ fontSize: 18, backgroundColor: 'rgba(50, 104, 211, 0.2)', paddingHorizontal: 4, paddingVertical: 2}}>@{user && user.displayName}</Text>
             </View>
-            <View style={{ width, flex: 1, paddingHorizontal: 30 }}>
-                {/*<SectionList
-                    contentContainerStyle={{ marginHorizontal: 20}}
-                    sections={settingsSections}
-                    keyExtractor={ (item, index) => item + index}
-                    renderItem={ ({item}) => (
-                        <TouchableOpacity>
-                            <View style={{ backgroundColor: '#fff', borderRadius: 5, marginVertical: 2, padding: 15}}>
-                                <Text>{item}</Text>
-                            </View>
-                        </TouchableOpacity>
-                        
-                    )}
-                    renderSectionHeader={({section: {title}}) => (
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', marginTop: 30, marginBottom: 10}}>{title}</Text>
-                    )}
-                    />*/}
-                <Text style={{ fontSize: 23, fontWeight: '600', marginVertical: 15}}>Account details</Text>
-                <ButtonEx title="Name" value={user && userDetails && userDetails.firstName}/>
-                <ButtonEx title="Password" value={user && userDetails && userDetails.firstName} secured/>
-            </View>
-        </SafeAreaView>
+        </View>
     )
 }
 
@@ -96,7 +59,7 @@ const styles = StyleSheet.create({
     avatar: {
         position: 'relative',
         borderRadius: 100,
-        width: 150, height: 150,
+        width: 100,  height: 100,
         backgroundColor: '#ccc',
 
     },
@@ -104,7 +67,7 @@ const styles = StyleSheet.create({
     avatarCircleButton : {
         position: 'absolute',
         borderRadius: 100,
-        width: 50, height: 50,
+        width: 35, height: 35,
         backgroundColor: '#f1f1f1',
         bottom: 0, right: 0,
         alignItems: 'center',
